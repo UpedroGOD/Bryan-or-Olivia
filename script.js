@@ -8,6 +8,7 @@ const whatsappConfirmLink = document.querySelector("#whatsapp-confirm-link");
 const animatedNames = document.querySelectorAll(".name-boy, .name-girl");
 const addressCopyFields = document.querySelectorAll(".address-copy-field");
 const copyToast = document.querySelector("#copy-toast");
+const inviteConfig = window.INVITE_CONFIG || {};
 const whatsappNumber = "5531993586484";
 const whatsappMessage =
   "Oi! Confirmando minha presenca no cha revelacao do dia 24 de maio. Vou estar com voces nesse momento especial e levar as fraldas com carinho.";
@@ -16,6 +17,7 @@ const initialBoyAnimationDelay = 3000;
 const nameAnimationDuration = 4000;
 const nameReturnDuration = 900;
 const copyToastDuration = 2200;
+const presenceFeedbackDuration = 3200;
 
 updateCountdown();
 markExternalLinks();
@@ -76,25 +78,35 @@ function setupPresenceForm() {
     return;
   }
 
+  guestNameInput.addEventListener("input", () => {
+    clearPresenceFeedback();
+  });
+
   presenceForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
     const guestName = guestNameInput.value.trim();
 
     if (!guestName) {
-      presenceFeedback.textContent = "Digite seu nome para confirmar.";
+      setPresenceFeedback("Digite seu nome para confirmar.");
       return;
     }
 
-    const storedGuests = JSON.parse(localStorage.getItem("confirmacoes-cha-revelacao") || "[]");
+    saveGuestLocally(guestName);
 
-    storedGuests.push({
-      name: guestName,
-      confirmedAt: new Date().toISOString()
-    });
+    if (hasRemoteConfirmationSetup()) {
+      submitPresenceToRemoteForm(guestName);
+      clearPresenceFeedback();
+      showStatusToast(
+        inviteConfig.confirmationSuccessMessage || "Presenca confirmada"
+      );
+    } else {
+      setPresenceFeedback(
+        `${guestName}, sua presenca foi salva so neste aparelho. ` +
+          "Para receber a lista completa de todos os convidados, configure o Google Form no arquivo config.js."
+      );
+    }
 
-    localStorage.setItem("confirmacoes-cha-revelacao", JSON.stringify(storedGuests));
-    presenceFeedback.textContent = `${guestName}, sua presenca foi registrada com sucesso.`;
     presenceForm.reset();
   });
 }
@@ -111,6 +123,43 @@ function setupWhatsAppLink() {
   }
 
   whatsappConfirmLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappMessage)}`;
+}
+
+function saveGuestLocally(guestName) {
+  const storedGuests = JSON.parse(localStorage.getItem("confirmacoes-cha-revelacao") || "[]");
+
+  storedGuests.push({
+    name: guestName,
+    confirmedAt: new Date().toISOString()
+  });
+
+  localStorage.setItem("confirmacoes-cha-revelacao", JSON.stringify(storedGuests));
+}
+
+function hasRemoteConfirmationSetup() {
+  return Boolean(
+    inviteConfig.confirmationFormAction &&
+      inviteConfig.confirmationNameField
+  );
+}
+
+function submitPresenceToRemoteForm(guestName) {
+  const hiddenForm = document.createElement("form");
+  const hiddenInput = document.createElement("input");
+
+  hiddenForm.action = inviteConfig.confirmationFormAction;
+  hiddenForm.method = "POST";
+  hiddenForm.target = "confirmation-submit-frame";
+  hiddenForm.style.display = "none";
+
+  hiddenInput.type = "hidden";
+  hiddenInput.name = inviteConfig.confirmationNameField;
+  hiddenInput.value = guestName;
+
+  hiddenForm.appendChild(hiddenInput);
+  document.body.appendChild(hiddenForm);
+  hiddenForm.submit();
+  document.body.removeChild(hiddenForm);
 }
 
 function prepareAnimatedNameLetters() {
@@ -213,7 +262,11 @@ async function copyAddressField(field) {
   }
 
   updateCopyHint(hint, copied);
-  showCopyToast(copied);
+  showStatusToast(
+    copied
+      ? "Endereco copiado com sucesso"
+      : "Nao foi possivel copiar o endereco"
+  );
 
   window.setTimeout(() => {
     field.blur();
@@ -244,14 +297,12 @@ function updateCopyHint(hint, copied) {
   hint.dataset.resetTimer = String(timerId);
 }
 
-function showCopyToast(copied) {
+function showStatusToast(message) {
   if (!copyToast) {
     return;
   }
 
-  copyToast.textContent = copied
-    ? "Endereco copiado com sucesso"
-    : "Nao foi possivel copiar o endereco";
+  copyToast.textContent = message;
   copyToast.classList.add("is-visible");
 
   const previousTimerId = Number(copyToast.dataset.hideTimer || 0);
@@ -266,6 +317,41 @@ function showCopyToast(copied) {
   }, copyToastDuration);
 
   copyToast.dataset.hideTimer = String(timerId);
+}
+
+function setPresenceFeedback(message) {
+  if (!presenceFeedback) {
+    return;
+  }
+
+  const previousTimerId = Number(presenceFeedback.dataset.hideTimer || 0);
+
+  if (previousTimerId) {
+    window.clearTimeout(previousTimerId);
+  }
+
+  presenceFeedback.textContent = message;
+
+  const timerId = window.setTimeout(() => {
+    clearPresenceFeedback();
+  }, presenceFeedbackDuration);
+
+  presenceFeedback.dataset.hideTimer = String(timerId);
+}
+
+function clearPresenceFeedback() {
+  if (!presenceFeedback) {
+    return;
+  }
+
+  const previousTimerId = Number(presenceFeedback.dataset.hideTimer || 0);
+
+  if (previousTimerId) {
+    window.clearTimeout(previousTimerId);
+    delete presenceFeedback.dataset.hideTimer;
+  }
+
+  presenceFeedback.textContent = "";
 }
 
 function triggerNameAnimation(nameElement) {

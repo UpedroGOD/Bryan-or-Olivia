@@ -1340,8 +1340,6 @@ button {
     display: flex;
     flex: 1;
     flex-direction: column;
-    position: relative;
-    padding-bottom: 34px;
   }
 
   .confirmation-form .message-link.full {
@@ -1349,11 +1347,9 @@ button {
   }
 
   .form-feedback {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
     min-height: 24px;
+    margin-top: 10px;
+    line-height: 1.45;
   }
 
   .message-actions {
