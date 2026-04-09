@@ -130,6 +130,7 @@ function prepareAnimatedNameLetters() {
     });
 
     nameElement.style.setProperty("--effect-delay", `${200 + totalLetters * 70}ms`);
+    nameElement.style.setProperty("--name-scene-duration", `${nameAnimationDuration}ms`);
   });
 }
 

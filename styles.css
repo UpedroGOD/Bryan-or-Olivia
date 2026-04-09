@@ -221,6 +221,41 @@ h1 {
   font-size: 1rem;
 }
 
+.highlight-card-address {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.address-copy-field {
+  width: 100%;
+  min-height: 88px;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.97rem;
+  line-height: 1.5;
+  resize: none;
+  overflow: hidden;
+  user-select: all;
+  cursor: text;
+}
+
+.address-copy-field:focus {
+  outline: none;
+}
+
+.copy-hint {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -380,6 +415,10 @@ button {
   gap: 12px;
   justify-content: center;
   margin-top: 24px;
+}
+
+.info-card-story .info-actions {
+  justify-content: flex-start;
 }
 
 .info-actions .button,
@@ -676,7 +715,7 @@ button {
 }
 
 .name-boy {
-  min-width: 5.3ch;
+  min-width: 6.1ch;
   color: #6c93db;
 }
 
@@ -713,7 +752,7 @@ button {
 }
 
 .name-effect-boy {
-  width: 100%;
+  width: 6.8ch;
   min-height: 1.25em;
   overflow: visible;
 }
@@ -793,24 +832,50 @@ button {
   transform: translateY(0.32em);
 }
 
-.race-car {
+.race-smoke {
   position: absolute;
   left: 0;
   top: 50%;
   z-index: 1;
-  font-size: 1.05em;
+  font-size: 0.72em;
   opacity: 0;
-  transform: translate(-1.45em, -52%) scaleX(-1) scale(0.88);
+  transform: translate(-1.12em, -42%) scale(0.42);
   will-change: transform, opacity;
 }
 
-.race-dust {
+.race-rival {
   position: absolute;
-  left: 0.15em;
+  left: 0;
   top: 50%;
-  font-size: 0.62em;
+  z-index: 1;
+  font-size: 1.01em;
   opacity: 0;
-  transform: translate(-0.45em, -8%) scale(0.4);
+  transform: translate(0.72em, -52%) scaleX(-1) scale(0.88);
+  filter: hue-rotate(155deg) saturate(1.6) brightness(1.08)
+    drop-shadow(0 6px 10px rgba(230, 130, 89, 0.22));
+  will-change: transform, opacity;
+}
+
+.race-car {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 2;
+  font-size: 1.05em;
+  opacity: 0;
+  transform: translate(-1.45em, -52%) scaleX(-1) scale(0.88);
+  filter: drop-shadow(0 6px 10px rgba(108, 147, 219, 0.28));
+  will-change: transform, opacity;
+}
+
+.race-finish {
+  position: absolute;
+  right: -0.08em;
+  top: 50%;
+  z-index: 0;
+  font-size: 0.78em;
+  opacity: 0;
+  transform: translate(0.16em, -60%) scale(0.72);
   will-change: transform, opacity;
 }
 
@@ -832,20 +897,28 @@ button {
   will-change: transform, opacity;
 }
 
-.name-boy.is-animating .race-car {
-  animation: race-car-launch 1180ms linear infinite;
+.name-boy.is-animating .race-smoke {
+  animation: race-smoke-scene var(--name-scene-duration, 4000ms) ease-out 1 both;
 }
 
-.name-boy.is-animating .race-dust {
-  animation: race-dust-pop 1180ms ease-out infinite;
+.name-boy.is-animating .race-rival {
+  animation: race-rival-run var(--name-scene-duration, 4000ms) linear 1 both;
+}
+
+.name-boy.is-animating .race-car {
+  animation: race-car-scene var(--name-scene-duration, 4000ms) linear 1 both;
+}
+
+.name-boy.is-animating .race-finish {
+  animation: race-finish-wave var(--name-scene-duration, 4000ms) ease-out 1 both;
 }
 
 .name-girl.is-animating .toy-bear {
-  animation: teddy-bear-loop 1800ms ease-in-out infinite;
+  animation: teddy-bear-loop var(--name-scene-duration, 4000ms) ease-in-out 1 both;
 }
 
 .name-girl.is-animating .toy-bow {
-  animation: teddy-bow-loop 1800ms ease-in-out infinite;
+  animation: teddy-bow-loop var(--name-scene-duration, 4000ms) ease-in-out 1 both;
 }
 
 .name-boy.is-animating {
@@ -881,81 +954,187 @@ button {
   width: 100%;
 }
 
-@keyframes race-car-launch {
+@keyframes race-car-scene {
   0% {
     opacity: 0;
-    transform: translate(-1.75em, -52%) scaleX(-1) scale(0.82) rotate(0deg);
+    transform: translate(-1.82em, -52%) scaleX(-1) scale(0.82) rotate(0deg);
   }
 
-  10% {
+  6% {
+    opacity: 1;
+    transform: translate(-1.34em, -52%) scaleX(-1) scale(0.85) rotate(0deg);
+  }
+
+  28% {
+    opacity: 1;
+    transform: translate(0.86em, -54%) scaleX(-1) scale(1) rotate(-2deg);
+  }
+
+  33% {
     opacity: 0;
-    transform: translate(-1.5em, -52%) scaleX(-1) scale(0.84) rotate(0deg);
+    transform: translate(1.1em, -53%) scaleX(-1) scale(1) rotate(-2deg);
   }
 
-  20% {
+  34% {
+    opacity: 0;
+    transform: translate(-1.26em, -52%) scaleX(-1) scale(0.86) rotate(0deg);
+  }
+
+  40% {
     opacity: 1;
-    transform: translate(-0.98em, -52%) scaleX(-1) scale(0.9) rotate(0deg);
+    transform: translate(-0.62em, -52%) scaleX(-1) scale(0.9) rotate(0deg);
   }
 
-  56% {
+  54% {
     opacity: 1;
-    transform: translate(0.18em, -55%) scaleX(-1) scale(1.01) rotate(-2deg);
+    transform: translate(0.82em, -54%) scaleX(-1) scale(0.98) rotate(-2deg);
   }
 
-  82% {
+  64% {
     opacity: 1;
-    transform: translate(1.18em, -53%) scaleX(-1) scale(1.05) rotate(-1deg);
+    transform: translate(1.86em, -53%) scaleX(-1) scale(1.04) rotate(-1deg);
   }
 
-  92% {
-    opacity: 0.25;
-    transform: translate(1.55em, -52%) scaleX(-1) scale(1.04) rotate(-1deg);
+  67% {
+    opacity: 0;
+    transform: translate(2.14em, -53%) scaleX(-1) scale(1.04) rotate(-1deg);
+  }
+
+  68% {
+    opacity: 0;
+    transform: translate(-1.18em, -52%) scaleX(-1) scale(0.88) rotate(0deg);
+  }
+
+  74% {
+    opacity: 1;
+    transform: translate(-0.72em, -52%) scaleX(-1) scale(0.9) rotate(0deg);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translate(1.78em, -54%) scaleX(-1) scale(1.03) rotate(-1deg);
   }
 
   100% {
     opacity: 0;
-    transform: translate(1.85em, -52%) scaleX(-1) scale(1.02) rotate(0deg);
+    transform: translate(2.92em, -52%) scaleX(-1) scale(1.06) rotate(0deg);
   }
 }
 
-@keyframes race-dust-pop {
+@keyframes race-rival-run {
   0% {
     opacity: 0;
-    transform: translate(-0.45em, -8%) scale(0.35);
+    transform: translate(0.78em, -52%) scaleX(-1) scale(0.88);
   }
 
-  18% {
+  34% {
     opacity: 0;
-    transform: translate(-0.4em, -8%) scale(0.38);
+    transform: translate(0.78em, -52%) scaleX(-1) scale(0.88);
   }
 
-  32% {
-    opacity: 0.9;
-    transform: translate(-0.18em, -20%) scale(0.95);
+  40% {
+    opacity: 1;
+    transform: translate(0.78em, -52%) scaleX(-1) scale(0.9);
   }
 
-  70% {
-    opacity: 0.35;
-    transform: translate(-0.82em, -44%) scale(1.14);
+  52% {
+    opacity: 1;
+    transform: translate(1.08em, -52%) scaleX(-1) scale(0.92);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translate(1.18em, -52%) scaleX(-1) scale(0.9);
+  }
+
+  66% {
+    opacity: 0;
+    transform: translate(1.24em, -52%) scaleX(-1) scale(0.88);
   }
 
   100% {
     opacity: 0;
-    transform: translate(-1.08em, -54%) scale(0.72);
+    transform: translate(1.24em, -52%) scaleX(-1) scale(0.88);
+  }
+}
+
+@keyframes race-smoke-scene {
+  0% {
+    opacity: 0;
+    transform: translate(-1.1em, -42%) scale(0.42);
+  }
+
+  8% {
+    opacity: 0.92;
+    transform: translate(-0.98em, -44%) scale(0.72);
+  }
+
+  18% {
+    opacity: 0.6;
+    transform: translate(-1.18em, -50%) scale(0.94);
+  }
+
+  28% {
+    opacity: 0.08;
+    transform: translate(-1.44em, -58%) scale(1.04);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-1.44em, -58%) scale(1.04);
+  }
+}
+
+@keyframes race-finish-wave {
+  0% {
+    opacity: 0;
+    transform: translate(0.16em, -60%) scale(0.72);
+  }
+
+  66% {
+    opacity: 0;
+    transform: translate(0.14em, -60%) scale(0.76);
+  }
+
+  78% {
+    opacity: 0.86;
+    transform: translate(0.06em, -61%) scale(0.88);
+  }
+
+  92% {
+    opacity: 1;
+    transform: translate(0, -62%) scale(0.96);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: translate(-0.04em, -62%) scale(0.9);
   }
 }
 
 @keyframes teddy-bear-loop {
   0% {
-    transform: translateY(0.08em) scale(0.88) rotate(-8deg);
+    transform: translateY(0.14em) scale(0.8) rotate(-10deg);
   }
 
-  26% {
-    transform: translateY(-0.14em) scale(1.06) rotate(7deg);
+  16% {
+    transform: translateY(-0.08em) scale(0.96) rotate(4deg);
   }
 
-  58% {
-    transform: translateY(-0.04em) scale(0.98) rotate(-4deg);
+  34% {
+    transform: translateY(-0.18em) scale(1.06) rotate(8deg);
+  }
+
+  54% {
+    transform: translateY(-0.02em) scale(0.94) rotate(-5deg);
+  }
+
+  74% {
+    transform: translateY(-0.12em) scale(1.02) rotate(5deg);
+  }
+
+  90% {
+    transform: translateY(-0.01em) scale(0.98) rotate(-2deg);
   }
 
   100% {
@@ -969,14 +1148,24 @@ button {
     transform: translate(0.01em, 0.02em) scale(0.35) rotate(-16deg);
   }
 
-  24% {
+  18% {
     opacity: 1;
-    transform: translate(0.08em, -0.18em) scale(1) rotate(12deg);
+    transform: translate(0.08em, -0.18em) scale(0.92) rotate(12deg);
   }
 
-  68% {
-    opacity: 0.65;
-    transform: translate(0.16em, -0.28em) scale(0.88) rotate(18deg);
+  42% {
+    opacity: 0.82;
+    transform: translate(0.12em, -0.24em) scale(1) rotate(18deg);
+  }
+
+  66% {
+    opacity: 0.55;
+    transform: translate(0.18em, -0.3em) scale(0.84) rotate(20deg);
+  }
+
+  86% {
+    opacity: 0.2;
+    transform: translate(0.2em, -0.36em) scale(0.72) rotate(22deg);
   }
 
   100% {
@@ -1012,8 +1201,10 @@ button {
   .name-girl.is-animating,
   .name-boy.is-animating .name-letter,
   .name-girl.is-animating .name-letter,
+  .name-boy.is-animating .race-smoke,
+  .name-boy.is-animating .race-rival,
   .name-boy.is-animating .race-car,
-  .name-boy.is-animating .race-dust,
+  .name-boy.is-animating .race-finish,
   .name-girl.is-animating .toy-bear,
   .name-girl.is-animating .toy-bow {
     animation: none;
