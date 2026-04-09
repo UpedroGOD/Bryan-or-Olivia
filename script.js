@@ -7,12 +7,15 @@ const presenceFeedback = document.querySelector("#presence-feedback");
 const whatsappConfirmLink = document.querySelector("#whatsapp-confirm-link");
 const animatedNames = document.querySelectorAll(".name-boy, .name-girl");
 const addressCopyFields = document.querySelectorAll(".address-copy-field");
+const copyToast = document.querySelector("#copy-toast");
 const whatsappNumber = "5531993586484";
 const whatsappMessage =
   "Oi! Confirmando minha presenca no cha revelacao do dia 24 de maio. Vou estar com voces nesse momento especial e levar as fraldas com carinho.";
-const autoNameAnimationDelay = 2500;
+const initialGirlAnimationDelay = 2500;
+const initialBoyAnimationDelay = 3000;
 const nameAnimationDuration = 4000;
 const nameReturnDuration = 900;
+const copyToastDuration = 2200;
 
 updateCountdown();
 markExternalLinks();
@@ -159,11 +162,15 @@ function scheduleInitialNameAnimations() {
     return;
   }
 
-  window.setTimeout(() => {
-    animatedNames.forEach((nameElement) => {
+  animatedNames.forEach((nameElement) => {
+    const delay = nameElement.classList.contains("name-girl")
+      ? initialGirlAnimationDelay
+      : initialBoyAnimationDelay;
+
+    window.setTimeout(() => {
       triggerNameAnimation(nameElement);
-    });
-  }, autoNameAnimationDelay);
+    }, delay);
+  });
 }
 
 function setupAddressCopyFields() {
@@ -206,6 +213,7 @@ async function copyAddressField(field) {
   }
 
   updateCopyHint(hint, copied);
+  showCopyToast(copied);
 
   window.setTimeout(() => {
     field.blur();
@@ -234,6 +242,30 @@ function updateCopyHint(hint, copied) {
   }, 1800);
 
   hint.dataset.resetTimer = String(timerId);
+}
+
+function showCopyToast(copied) {
+  if (!copyToast) {
+    return;
+  }
+
+  copyToast.textContent = copied
+    ? "Endereco copiado com sucesso"
+    : "Nao foi possivel copiar o endereco";
+  copyToast.classList.add("is-visible");
+
+  const previousTimerId = Number(copyToast.dataset.hideTimer || 0);
+
+  if (previousTimerId) {
+    window.clearTimeout(previousTimerId);
+  }
+
+  const timerId = window.setTimeout(() => {
+    copyToast.classList.remove("is-visible");
+    delete copyToast.dataset.hideTimer;
+  }, copyToastDuration);
+
+  copyToast.dataset.hideTimer = String(timerId);
 }
 
 function triggerNameAnimation(nameElement) {
